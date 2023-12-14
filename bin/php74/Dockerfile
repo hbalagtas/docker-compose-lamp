@@ -67,6 +67,14 @@ RUN docker-php-ext-install pdo_mysql && \
     docker-php-ext-install calendar && \
     docker-php-ext-install exif
 
+# OFAS Extensions
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --fix-missing ghostscript
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --fix-missing libldap2-dev
+
+RUN docker-php-ext-install ldap
 
 # Install Freetype 
 RUN apt-get -y update && \

@@ -6,4 +6,5 @@
 /www/**
 .DS_Store
 /buildtest
+/ofas/
 /ofas/*
