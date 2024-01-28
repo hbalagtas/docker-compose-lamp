@@ -80,6 +80,24 @@ RUN docker-php-ext-install pdo_mysql && \
     docker-php-ext-install calendar && \
     docker-php-ext-install exif
 
+# AFD extensions
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --fix-missing libldap2-dev
+
+RUN docker-php-ext-install ldap
+
+# Install supervisord
+RUN apt-get update && apt-get upgrade -y && apt-get install -y supervisor
+
+# Make supervisor log directory
+RUN mkdir -p /var/log/supervisor
+
+# Copy local supervisord.conf to the conf.d directory
+COPY --chown=root:root supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Start supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
 
 # Install Freetype 
 RUN apt-get -y update && \
