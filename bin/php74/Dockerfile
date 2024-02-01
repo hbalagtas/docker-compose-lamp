@@ -1,4 +1,5 @@
 FROM php:7.4.2-apache-buster
+#FROM php:7.4.2-apache
 
 # Surpresses debconf complaints of trying to install apt packages interactively
 # https://github.com/moby/moby/issues/4032#issuecomment-192327844
@@ -67,6 +68,41 @@ RUN docker-php-ext-install pdo_mysql && \
     docker-php-ext-install calendar && \
     docker-php-ext-install exif
 
+
+# OFAS extensions
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --fix-missing ghostscript
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --fix-missing libldap2-dev
+
+#RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
+RUN docker-php-ext-install ldap
+
+# Install memcached
+RUN apt-get update \
+    && apt-get install -y libmemcached11 libmemcachedutil2 build-essential libmemcached-dev libz-dev \
+    && pecl install memcached \
+    && echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini \
+    && apt-get remove -y build-essential libmemcached-dev libz-dev \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /tmp/pear
+
+# Install supervisord
+RUN apt-get update && apt-get upgrade -y && apt-get install -y supervisor
+
+# Make supervisor log directory
+RUN mkdir -p /var/log/supervisor
+
+# Copy local supervisord.conf to the conf.d directory
+COPY --chown=root:root supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Start supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
+# Install vim
+RUN apt-get update && apt-get upgrade -y && apt-get install -y vim
 
 # Install Freetype 
 RUN apt-get -y update && \
