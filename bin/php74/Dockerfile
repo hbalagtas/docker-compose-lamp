@@ -88,14 +88,15 @@ RUN apt-get update && \
 RUN docker-php-ext-install ldap
 
 # Install memcached
-RUN apt-get update \
-    && apt-get install -y libmemcached11 libmemcachedutil2 build-essential libmemcached-dev libz-dev \
-    && pecl install memcached \
-    && echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini \
-    && apt-get remove -y build-essential libmemcached-dev libz-dev \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /tmp/pear
+# RUN apt-get update \
+#     && apt-get install -y libmemcached11 libmemcachedutil2 build-essential libmemcached-dev libz-dev \
+#     && pecl install memcached \
+#     && echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini \
+#     && apt-get remove -y build-essential libmemcached-dev libz-dev \
+#     && apt-get autoremove -y \
+#     && apt-get clean \
+#     && rm -rf /tmp/pear \
+#     && apt-get install -y memcached
 
 # Install supervisord
 RUN apt-get update && apt-get upgrade -y && apt-get install -y supervisor
